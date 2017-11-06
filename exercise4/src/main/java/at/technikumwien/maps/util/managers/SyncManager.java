@@ -58,7 +58,7 @@ public class SyncManager {
         return syncDrinkingFountains(callback, null);
     }
 
-    public Cancelable syncDrinkingFountains(@NonNull  final OnOperationSuccessfulCallback callback, final OnDataLoadedCallback<List<DrinkingFountain>> loadedCallback) {
+    public Cancelable syncDrinkingFountains(@NonNull final OnOperationSuccessfulCallback callback, final OnDataLoadedCallback<List<DrinkingFountain>> loadedCallback) {
         final Call<DrinkingFountainResponse> c = drinkingFountainApi.getDrinkingFountains();
 
         c.enqueue(new Callback<DrinkingFountainResponse>() {

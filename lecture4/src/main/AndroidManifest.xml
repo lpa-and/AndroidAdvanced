@@ -24,6 +24,9 @@
             </intent-filter>
 
         </activity>
+
+        <service android:name=".service.SyncDrinkingFountainJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="YourAPIKeyHere"/>
 
