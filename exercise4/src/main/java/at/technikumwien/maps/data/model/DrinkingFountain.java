@@ -1,6 +1,7 @@
 package at.technikumwien.maps.data.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -22,6 +23,7 @@ public class DrinkingFountain {
 
     public DrinkingFountain() { }
 
+    @Ignore
     public DrinkingFountain(@NonNull String id, @NonNull String name, double lat, double lng) {
         this.id = id;
         this.name = name;
