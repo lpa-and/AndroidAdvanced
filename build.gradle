@@ -12,7 +12,7 @@ buildscript {
         // in the individual module build.gradle files
     }
 
-    ext.supportLibVersion = '28.0.0-rc01'
+    ext.supportLibVersion = '28.0.0-rc02'
     ext.playServicesVersion = '15.0.1'
     ext.archComponentsVersion = '1.1.1'
     ext.autoValueVersion = '1.6.2'
