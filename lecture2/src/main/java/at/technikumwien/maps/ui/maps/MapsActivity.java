@@ -62,7 +62,7 @@ public class MapsActivity extends BaseActivity<MapsView, MapsPresenter> implemen
     }
 
     @Override
-    public void showLoadingError(Throwable t) {
+    public void showLoadingError(Throwable throwable) {
         Snackbar.make(rootLayout, R.string.snackbar_load_retry_message, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.snackbar_load_retry_action, new View.OnClickListener() {
                     @Override
