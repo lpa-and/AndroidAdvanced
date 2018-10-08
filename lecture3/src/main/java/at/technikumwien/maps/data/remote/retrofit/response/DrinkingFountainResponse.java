@@ -5,7 +5,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.technikumwien.maps.data.model.DrinkingFountain;
+import at.technikumwien.maps.data.local.DrinkingFountain;
+
 
 public class DrinkingFountainResponse {
 
@@ -30,7 +31,7 @@ public class DrinkingFountainResponse {
 
         for(DrinkingFountainItem i : features) {
             try {
-                drinkingFountainList.add(DrinkingFountain.create(i.id, i.properties.NAME, i.geometry.coordinates[1], i.geometry.coordinates[0]));
+                drinkingFountainList.add(new DrinkingFountain(i.id, i.properties.NAME, i.geometry.coordinates[1], i.geometry.coordinates[0]));
             } catch(Exception e) {
                 Log.e("DrinkingFountainResp", "Could not create Drinking Fountain from response", e);
             }

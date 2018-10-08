@@ -4,7 +4,8 @@ import com.hannesdorfmann.mosby3.mvp.MvpView;
 
 import java.util.List;
 
-import at.technikumwien.maps.data.model.DrinkingFountain;
+import at.technikumwien.maps.data.local.DrinkingFountain;
+
 
 public interface MapsView extends MvpView {
     void showDrinkingFountains(List<DrinkingFountain> drinkingFountains);

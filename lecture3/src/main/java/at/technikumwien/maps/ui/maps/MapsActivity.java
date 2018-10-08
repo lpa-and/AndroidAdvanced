@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import at.technikumwien.maps.R;
-import at.technikumwien.maps.data.model.DrinkingFountain;
+import at.technikumwien.maps.data.local.DrinkingFountain;
 import at.technikumwien.maps.ui.base.BaseActivity;
 
 public class MapsActivity extends BaseActivity<MapsView, MapsPresenter> implements OnMapReadyCallback, MapsView {
@@ -58,7 +58,7 @@ public class MapsActivity extends BaseActivity<MapsView, MapsPresenter> implemen
         googleMap.clear();
 
         for(DrinkingFountain df : drinkingFountains) {
-            googleMap.addMarker(new MarkerOptions().position(df.position()).title(df.name()));
+            googleMap.addMarker(new MarkerOptions().position(df.position()).title(df.getName()));
         }
     }
 

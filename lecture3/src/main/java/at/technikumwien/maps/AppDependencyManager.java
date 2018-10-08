@@ -1,13 +1,14 @@
 package at.technikumwien.maps;
 
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.content.res.Resources;
 
 import com.google.gson.Gson;
 
-import at.technikumwien.maps.data.remote.AsyncTaskJsonObjectDrinkingFountainRepo;
-import at.technikumwien.maps.data.remote.DrinkingFountainRepo;
-import at.technikumwien.maps.data.remote.RetrofitDrinkingFountainRepo;
+import at.technikumwien.maps.data.local.AppDatabase;
+import at.technikumwien.maps.data.local.RoomDrinkingFountainRepo;
 import at.technikumwien.maps.data.remote.retrofit.DrinkingFountainApi;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -17,15 +18,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AppDependencyManager {
 
     private final Context appContext;
-    private DrinkingFountainRepo drinkingFountainRepo;
+    private RoomDrinkingFountainRepo roomDrinkingFountainRepo;
     private OkHttpClient okHttpClient;
     private Gson gson;
     private DrinkingFountainApi drinkingFountainApi;
+    private AppDatabase appDatabase;
 
     public AppDependencyManager(Context appContext) {
         this.appContext = appContext;
     }
 
+    public AppDatabase getAppDatabase() {
+        if(appDatabase == null) {
+            appDatabase = Room.databaseBuilder(appContext, AppDatabase.class, "app").build();
+        }
+        return appDatabase;
+    }
 
     public Context getAppContext() {
         return appContext;
@@ -35,9 +43,11 @@ public class AppDependencyManager {
         return appContext.getResources();
     }
 
-    public DrinkingFountainRepo getDrinkingFountainRepo() {
-        if(drinkingFountainRepo == null) { drinkingFountainRepo = new RetrofitDrinkingFountainRepo(this); }
-        return drinkingFountainRepo;
+    public RoomDrinkingFountainRepo getRoomDrinkingFountainRepo() {
+        if(roomDrinkingFountainRepo == null) {
+            roomDrinkingFountainRepo = new RoomDrinkingFountainRepo(this);
+        }
+        return roomDrinkingFountainRepo;
     }
 
     public Gson getGson() {
@@ -62,7 +72,7 @@ public class AppDependencyManager {
             }
 
             drinkingFountainApi = new Retrofit.Builder()
-                    .baseUrl(DrinkingFountainRepo.BASE_URL)
+                    .baseUrl(DrinkingFountainApi.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(getGson()))
                     .callFactory(httpClientBuilder.build())
                     .build().create(DrinkingFountainApi.class);
