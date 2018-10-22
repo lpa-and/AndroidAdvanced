@@ -5,6 +5,7 @@
 
     <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -24,7 +25,10 @@
 
         </activity>
 
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="YourAPIKeyHere"/>
+        <service android:name=".service.SyncDrinkingFountainsJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="YourAPIKeyhere"/>
 
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 

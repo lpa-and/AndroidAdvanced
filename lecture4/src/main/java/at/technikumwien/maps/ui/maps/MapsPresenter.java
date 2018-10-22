@@ -1,5 +1,8 @@
 package at.technikumwien.maps.ui.maps;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
@@ -13,6 +16,7 @@ import at.technikumwien.maps.data.local.DrinkingFountainRepo;
 import at.technikumwien.maps.data.model.DrinkingFountain;
 import at.technikumwien.maps.data.remote.DrinkingFountainApi;
 import at.technikumwien.maps.data.remote.response.DrinkingFountainResponse;
+import at.technikumwien.maps.util.manager.SyncManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.HttpException;
@@ -22,19 +26,43 @@ public class MapsPresenter extends MvpBasePresenter<MapsView> {
 
     private final DrinkingFountainRepo drinkingFountainRepo;
     private final DrinkingFountainApi drinkingFountainApi;
+    private final SyncManager syncManager;
+
+    private LiveData<List<DrinkingFountain>> liveData;
+
+    private Observer<List<DrinkingFountain>> observer = new Observer<List<DrinkingFountain>>() {
+        @Override
+        public void onChanged(@Nullable List<DrinkingFountain> drinkingFountains) {
+            if(isViewAttached()) {
+                getView().showDrinkingFountains(drinkingFountains);
+            }
+        }
+    };
 
     public MapsPresenter(AppDependencyManager manager) {
         drinkingFountainRepo = manager.getDrinkingFountainRepo();
         drinkingFountainApi = manager.getDrinkingFountainApi();
+        syncManager = manager.getSyncManager();
+        liveData = drinkingFountainRepo.loadAllAsLiveData();
+    }
+
+    @Override
+    public void attachView(MapsView view) {
+        super.attachView(view);
+        liveData.observeForever(observer);
+    }
+
+    @Override
+    public void detachView() {
+        super.detachView();
+        liveData.removeObserver(observer);
     }
 
     public void loadDrinkingFountains() {
-        drinkingFountainRepo.loadAll(new OnDataLoadedCallback<List<DrinkingFountain>>() {
+        syncManager.loadDrinkingFountains(new OnDataLoadedCallback<List<DrinkingFountain>>() {
             @Override
             public void onDataLoaded(List<DrinkingFountain> data) {
-                if(data.isEmpty()) {
-                    refreshDrinkingFountains();
-                } else if(isViewAttached()) {
+                if(isViewAttached()) {
                     getView().showDrinkingFountains(data);
                 }
             }
@@ -49,29 +77,21 @@ public class MapsPresenter extends MvpBasePresenter<MapsView> {
     }
 
     public void refreshDrinkingFountains() {
-        drinkingFountainApi.getDrinkingFountains().enqueue(new Callback<DrinkingFountainResponse>() {
-            @Override
-            public void onResponse(Call<DrinkingFountainResponse> call, Response<DrinkingFountainResponse> response) {
-                if(response.isSuccessful()) {
-                    List<DrinkingFountain> drinkingFountainList = response.body().getDrinkingFountainList();
-                    drinkingFountainRepo.refreshList(new NoOpOnOperationSuccessfulCallback(), drinkingFountainList);
-
-                    if(isViewAttached()) {
-                        getView().showDrinkingFountains(drinkingFountainList);
+        syncManager.syncDrinkingFountains(new NoOpOnOperationSuccessfulCallback(),
+                new OnDataLoadedCallback<List<DrinkingFountain>>() {
+                    @Override
+                    public void onDataLoaded(List<DrinkingFountain> data) {
+                        if(isViewAttached()) {
+                            getView().showDrinkingFountains(data);
+                        }
                     }
-                } else {
-                    if(isViewAttached()) {
-                        getView().showLoadingError(new HttpException(response));
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<DrinkingFountainResponse> call, Throwable throwable) {
-                if(isViewAttached()) {
-                    getView().showLoadingError(throwable);
-                }
-            }
-        });
+                    @Override
+                    public void onDataLoadError(Throwable throwable) {
+                        if(isViewAttached()) {
+                            getView().showLoadingError(throwable);
+                        }
+                    }
+                });
     }
 }

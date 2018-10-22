@@ -1,5 +1,7 @@
 package at.technikumwien.maps.data.local;
 
+import android.arch.lifecycle.LiveData;
+
 import java.util.List;
 
 import at.technikumwien.maps.AppDependencyManager;
@@ -34,5 +36,10 @@ public class RoomDrinkingFountainRepo implements DrinkingFountainRepo {
                 return drinkingFountainDao.loadAll();
             }
         }.execute();
+    }
+
+    @Override
+    public LiveData<List<DrinkingFountain>> loadAllAsLiveData() {
+        return drinkingFountainDao.loadAllAsLiveData();
     }
 }
