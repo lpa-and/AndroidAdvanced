@@ -1,1 +1,1 @@
-include ':exercisetemplate', ':exercise1', ':exercise2', ':exercise3', ':exercise4'
+include ':exercisetemplate', ':exercise1', ':exercise2', ':exercise3', ':exercise4', ':exercisekotlin'
